@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#090b10">
+<title>APEX — Fitness Studio</title>
+<style>
+:root{--bg:#090b10;--panel:#131720;--panel2:#1b202b;--line:#292f3c;--text:#f6f7fb;--muted:#919aaa;--lime:#c8ff45;--purple:#a78bfa;--red:#ff7272}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+button,input,select{font:inherit}button{cursor:pointer;border:0}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--lime);outline-offset:3px}
+img{display:block;max-width:100%}
+.hidden{display:none!important}
+.app{max-width:1400px;margin:auto;min-height:100vh}
+header{height:75px;padding:0 5%;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid var(--line);position:sticky;top:0;background:#090b10ed;backdrop-filter:blur(15px);z-index:10}
+.logo{font-size:23px;font-weight:950;letter-spacing:3px}.logo span{color:var(--lime)}
+.pill{border:1px solid var(--line);padding:9px 13px;border-radius:30px;color:var(--lime);font-size:12px}
+nav{display:flex;gap:8px;overflow-x:auto;padding:13px 5%;border-bottom:1px solid var(--line);scrollbar-width:none}
+nav button{white-space:nowrap;background:transparent;color:var(--muted);padding:11px 15px;border-radius:10px;font-size:13px}
+nav button.active,nav button:hover{background:var(--lime);color:#111}
+main{padding:28px 5% 100px}
+.page{display:none}.page.active{display:block;animation:fade .25s}
+@keyframes fade{from{opacity:.4;transform:translateY(5px)}to{opacity:1;transform:none}}
+h1{font-size:clamp(29px,5vw,49px);letter-spacing:-1.7px;line-height:1.1}
+h2{font-size:22px;letter-spacing:-.5px}
+h3{font-size:16px}
+p{color:var(--muted);line-height:1.6}
+.eyebrow{color:var(--lime);font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;margin-bottom:12px}
+.btn{padding:13px 17px;background:var(--lime);color:#111;font-weight:800;border-radius:10px}
+.btn.secondary{background:var(--panel2);color:white;border:1px solid var(--line)}
+.btn.full{width:100%}
+.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:17px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:17px;padding:20px;min-width:0}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:30px 0 17px}
+.hero{display:grid;grid-template-columns:1fr 1fr;gap:25px;align-items:center;background:linear-gradient(120deg,#191f27,#10131b);border:1px solid var(--line);border-radius:23px;overflow:hidden}
+.hero-copy{padding:35px}
+.hero h1 span{color:var(--lime)}
+.hero p{margin:16px 0 23px;max-width:430px}
+.hero img{width:100%;height:340px;object-fit:cover}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:13px;margin-top:18px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:18px}
+.stat strong{display:block;font-size:26px;margin:10px 0 5px}
+.stat small{color:var(--muted)}
+.exercise{overflow:hidden;padding:0}
+.exercise img{width:100%;height:160px;object-fit:cover;background:#252b35}
+.exercise .inside{padding:17px}
+.exercise p{font-size:12px;margin:7px 0 14px}
+.tag{display:inline-block;background:#242a35;color:var(--lime);border-radius:6px;padding:5px 8px;font-size:10px;font-weight:800}
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.stack{display:grid;gap:12px}
+input,select{background:#0d1017;border:1px solid var(--line);border-radius:9px;padding:12px;color:white;width:100%;margin-top:7px}
+label{font-size:12px;color:var(--muted);display:block;margin-bottom:12px}
+.progress{height:7px;border-radius:20px;background:#2b303a;overflow:hidden;margin:12px 0}
+.progress div{height:100%;background:var(--lime);width:0;transition:width .3s}
+.workout-item{display:flex;gap:13px;align-items:center;border-bottom:1px solid var(--line);padding:15px 0}
+.workout-item:last-child{border:0}
+.workout-item img{width:70px;height:65px;border-radius:10px;object-fit:cover}
+.workout-item .details{flex:1;min-width:0}
+.workout-item .details p{font-size:12px}
+.check{width:24px;height:24px;accent-color:var(--lime)}
+.big-number{font-size:40px;font-weight:900;letter-spacing:-2px}
+.empty{text-align:center;padding:35px 15px}
+.filterbar{display:flex;gap:9px;flex-wrap:wrap;margin:18px 0}
+.filterbar button{background:var(--panel2);color:white;padding:9px 13px;border-radius:8px;font-size:12px}
+.filterbar button.active{background:var(--lime);color:#111}
+.timer{text-align:center;padding:25px}
+.timer button{margin:5px}
+.chart{display:flex;align-items:end;gap:10px;height:130px;padding-top:20px}
+.bar{flex:1;min-width:8px;background:var(--lime);border-radius:5px 5px 0 0;position:relative;transition:height .3s}
+.bar span{position:absolute;top:100%;left:50%;transform:translateX(-50%);font-size:10px;color:var(--muted);padding-top:8px}
+footer{text-align:center;padding:22px;color:var(--muted);font-size:11px;border-top:1px solid var(--line)}
+.toast{position:fixed;bottom:25px;left:50%;transform:translateX(-50%);background:var(--lime);color:#111;font-weight:800;padding:13px 20px;border-radius:12px;z-index:30;display:none}
+#intro{position:fixed;inset:0;background:#090b10;z-index:100;display:flex;align-items:center;justify-content:center;padding:22px}
+.intro-box{width:100%;max-width:950px;display:grid;grid-template-columns:1fr 1fr;background:var(--panel);border:1px solid var(--line);border-radius:24px;overflow:hidden}
+.intro-box img{height:100%;min-height:450px;width:100%;object-fit:cover}
+.intro-content{padding:35px;display:flex;flex-direction:column;justify-content:center}
+.intro-content h1{margin:15px 0}
+.intro-content p{margin:10px 0 25px}
+.onboard-step{display:none}.onboard-step.active{display:block}
+.dots{display:flex;gap:7px;margin:20px 0}
+.dots span{width:22px;height:4px;border-radius:5px;background:#333}.dots span.active{background:var(--lime)}
+#timerDisplay{font-size:55px;font-weight:900;margin:18px}
+@media(max-width:760px){
+ header{height:65px;padding:0 5%}main{padding-top:20px}
+ .hero{grid-template-columns:1fr}.hero-copy{padding:25px 22px}.hero img{height:230px}
+ .grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
+ .stats{gap:8px}.stat{padding:12px}.stat strong{font-size:21px}
+ .card{padding:15px}.exercise img{height:125px}.exercise .inside{padding:12px}
+ .intro-box{grid-template-columns:1fr;max-width:430px;max-height:92vh;overflow:auto}
+ .intro-box img{height:190px;min-height:190px}
+ .intro-content{padding:25px}
+}
+@media(max-width:390px){.grid{grid-template-columns:1fr}.stats{grid-template-columns:1fr 1fr}.stats .stat:last-child{grid-column:span 2}}
+</style>
+</head>
+<body>
+<div class="app">
+<header>
+ <div class="logo">APEX<span>.</span></div>
+ <div class="pill">FITNESS STUDIO</div>
+</header>
+<nav id="nav">
+ <button class="active" data-page="home">Overview</button>
+ <button data-page="workouts">Workouts</button>
+ <button data-page="library">Exercise Lab</button>
+ <button data-page="planner">Planner</button>
+ <button data-page="progress">Progress</button>
+ <button data-page="profile">My Profile</button>
+</nav>
+<main>
+<section class="page active" id="home">
+ <div class="hero">
+  <div class="hero-copy">
+   <div class="eyebrow">YOUR PERSONAL TRAINING SPACE</div>
+   <h1>Build strength.<br><span>Own your progress.</span></h1>
+   <p>A smarter space to explore calisthenics, build consistency and develop strength at your own pace.</p>
+   <button class="btn" onclick="go('workouts')">Explore workouts ↗</button>
+  </div>
+  <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=1000&q=85" alt="Modern gym" onerror="this.style.display='none'">
+ </div>
+ <div class="stats">
+  <div class="stat"><small>WORKOUTS DONE</small><strong id="homeDone">0</strong><small>Completed sessions</small></div>
+  <div class="stat"><small>ACTIVE DAYS</small><strong id="homeDays">0</strong><small>Days with activity</small></div>
+  <div class="stat"><small>EXERCISES DONE</small><strong id="homeExercises">0</strong><small>Completed sets of exercises</small></div>
+ </div>
+ <div class="section-head"><h2>Pick your training</h2><button class="btn secondary" onclick="go('library')">View all ↗</button></div>
+ <div class="grid">
+  <article class="card exercise"><img src="https://images.unsplash.com/photo-1598971639058-fab3c3109a00?auto=format&fit=crop&w=600&q=80" alt="Strength training"><div class="inside"><span class="tag">STRENGTH</span><h3 style="margin-top:12px">Upper Body</h3><p>Push-ups, shoulder strength and core stability.</p><button class="btn full" onclick="startPlan('upper')">Start session</button></div></article>
+  <article class="card exercise"><img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=600&q=80" alt="Fitness training"><div class="inside"><span class="tag">FULL BODY</span><h3 style="margin-top:12px">Bodyweight Basics</h3><p>Build your foundation with controlled movements.</p><button class="btn full" onclick="startPlan('beginner')">Start session</button></div></article>
+  <article class="card exercise"><img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=600&q=80" alt="Mobility training"><div class="inside"><span class="tag">RECOVERY</span><h3 style="margin-top:12px">Mobility Flow</h3><p>Gentle mobility and movement preparation.</p><button class="btn full" onclick="startPlan('mobility')">Start session</button></div></article>
+ </div>
+ <div class="section-head"><h2>Today's focus</h2></div>
+ <div class="card"><div class="row"><div><div class="eyebrow">CONSISTENCY OVER PERFECTION</div><h3 id="dailyTitle">Ready when you are.</h3><p id="dailyText">Pick a session and record your progress.</p></div><span style="font-size:35px">⚡</span></div></div>
+</section>
+
+<section class="page" id="workouts">
+ <div class="eyebrow">TRAINING PROGRAMS</div><h1>Your next session.</h1><p style="margin-top:12px">Choose a bodyweight plan. Exercises are suggestions, not a medical or personalized coaching assessment.</p>
+ <div class="grid" style="margin-top:25px">
+  <article class="card exercise"><img src="https://images.unsplash.com/photo-1598971639058-fab3c3109a00?auto=format&fit=crop&w=600&q=80" alt="Upper body workout"><div class="inside"><span class="tag">15–25 MIN</span><h3 style="margin-top:12px">Upper Body Builder</h3><p>Push-ups, knee push-ups, plank.</p><button class="btn full" onclick="startPlan('upper')">Choose plan</button></div></article>
+  <article class="card exercise"><img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?auto=format&fit=crop&w=600&q=80" alt="Full body workout"><div class="inside"><span class="tag">15–25 MIN</span><h3 style="margin-top:12px">Beginner Full Body</h3><p>Squats, wall push-ups, dead bugs.</p><button class="btn full" onclick="startPlan('beginner')">Choose plan</button></div></article>
+  <article class="card exercise"><img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=600&q=80" alt="Mobility workout"><div class="inside"><span class="tag">10–15 MIN</span><h3 style="margin-top:12px">Mobility & Recovery</h3><p>Gentle range-of-motion movements.</p><button class="btn full" onclick="startPlan('mobility')">Choose plan</button></div></article>
+  <article class="card exercise"><img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?auto=format&fit=crop&w=600&q=80" alt="Leg workout"><div class="inside"><span class="tag">15–20 MIN</span><h3 style="margin-top:12px">Leg Foundation</h3><p>Squats, calf raises and glute bridges.</p><button class="btn full" onclick="startPlan('legs')">Choose plan</button></div></article>
+  <article class="card exercise"><img src="https://images.unsplash.com/photo-1546483875-ad9014c88eba?auto=format&fit=crop&w=600&q=80" alt="Core training"><div class="inside"><span class="tag">10–15 MIN</span><h3 style="margin-top:12px">Core Control</h3><p>Dead bugs, knee planks and bird dogs.</p><button class="btn full" onclick="startPlan('core')">Choose plan</button></div></article>
+  <article class="card exercise"><img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=600&q=80" alt="Gym training"><div class="inside"><span class="tag">CUSTOM</span><h3 style="margin-top:12px">Build Your Own</h3><p>Pick exercises in the Exercise Lab.</p><button class="btn full" onclick="go('library')">Open lab</button></div></article>
+ </div>
+</section>
+
+<section class="page" id="library">
+ <div class="eyebrow">MOVEMENT DATABASE</div><h1>Exercise Lab.</h1><p style="margin-top:12px">Explore movements, filter by muscle group and add exercises to your own session.</p>
+ <input id="searchExercise" placeholder="Search exercises..." oninput="renderLibrary()" aria-label="Search exercises">
+ <div class="filterbar" id="filters">
+ <button class="active" data-filter="All">All</button><button data-filter="Upper">Upper body</button><button data-filter="Legs">Legs</button><button data-filter="Core">Core</button><button data-filter="Mobility">Mobility</button>
+ </div>
+ <div class="grid" id="libraryGrid"></div>
+ <div class="section-head"><h2>Custom session</h2><button class="btn" onclick="startCustom()">Start custom</button></div>
+ <div class="card"><p id="customSummary">No exercises selected yet.</p><div id="customList"></div><button class="btn secondary" style="margin-top:15px" onclick="clearCustom()">Clear selection</button></div>
+</section>
+
+<section class="page" id="planner">
+ <div class="eyebrow">YOUR TRAINING CALENDAR</div><h1>Plan your week.</h1><p style="margin-top:12px">Set a focus for each day. Your choices are saved on this device.</p>
+ <div class="section-head"><h2>Weekly schedule</h2></div>
+ <div class="stack" id="weekPlan"></div>
+ <div class="section-head"><h2>Recovery reminder</h2></div>
+ <div class="card"><h3>Rest is part of training.</h3><p style="margin-top:8px">Alternate challenging sessions with recovery. Stop if you feel pain, dizziness or unusual discomfort.</p></div>
+</section>
+
+<section class="page" id="progress">
+ <div class="eyebrow">YOUR PERSONAL HISTORY</div><h1>Progress, not perfection.</h1><p style="margin-top:12px">Your workout history and exercise completions, stored locally on this device.</p>
+ <div class="stats">
+  <div class="stat"><small>SESSIONS</small><strong id="pDone">0</strong></div>
+  <div class="stat"><small>EXERCISES</small><strong id="pExercises">0</strong></div>
+  <div class="stat"><small>TRAINING MINUTES</small><strong id="pMinutes">0</strong></div>
+ </div>
+ <div class="section-head"><h2>Last seven days</h2></div>
+ <div class="card"><div class="chart" id="chart"></div><p style="margin-top:35px;font-size:12px">Based on sessions completed in this app.</p></div>
+ <div class="section-head"><h2>Session history</h2><button class="btn secondary" onclick="exportData()">Export data</button></div>
+ <div class="card" id="history"></div>
+</section>
+
+<section class="page" id="profile">
+ <div class="eyebrow">YOUR TRAINING IDENTITY</div><h1>My profile.</h1><p style="margin-top:12px">Personalize your experience. Use a nickname if you prefer.</p>
+ <div class="card" style="margin-top:22px">
+ <label>Name<input id="profileName" placeholder="Your name"></label>
+ <label>Age<input id="profileAge" type="number" min="5" max="110" placeholder="Age"></label>
+ <label>Experience<select id="experience"><option>Beginner</option><option>Intermediate</option><option>Advanced</option></select></label>
+ <label>Main goal<select id="goal"><option>Build strength</option><option>Learn calisthenics</option><option>Improve mobility</option><option>Build consistency</option><option>General fitness</option></select></label>
+ <button class="btn full" onclick="saveProfile()">Save profile</button>
+ </div>
+ <div class="section-head"><h2>App preferences</h2></div>
+ <div class="card"><p>APEX works without an account or paid API. Workout images need an internet connection. Data stays in this browser unless you export or clear it.</p><button class="btn secondary" style="margin-top:15px" onclick="resetData()">Reset all app data</button></div>
+</section>
+</main>
+<footer>APEX FITNESS STUDIO · Train smart · Progress steadily</footer>
+</div>
+
+<div id="intro">
+ <div class="intro-box">
+ <img id="introImage" src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?auto=format&fit=crop&w=900&q=85" alt="Welcome to APEX">
+ <div class="intro-content">
+  <div class="logo">APEX<span>.</span></div>
+  <div class="dots"><span class="active"></span><span></span><span></span></div>
+  <div class="onboard-step active" id="step0"><div class="eyebrow">WELCOME TO YOUR NEXT CHAPTER</div><h1>Make strength a habit.</h1><p>Discover bodyweight training, create sessions and follow your progress in one personal fitness studio.</p><button class="btn full" onclick="nextIntro(1)">Let's get started →</button></div>
+  <div class="onboard-step" id="step1"><div class="eyebrow">FIRST, YOUR PROFILE</div><h1>Let's meet you.</h1><p>We use these choices only to personalize this browser's experience.</p><label>Your name<input id="introName" placeholder="What should we call you?"></label><label>Your age<input id="introAge" type="number" min="5" max="110" placeholder="Age"></label><button class="btn full" onclick="nextIntro(2)">Continue →</button></div>
+  <div class="onboard-step" id="step2"><div class="eyebrow">YOUR JOURNEY STARTS HERE</div><h1>Train at your pace.</h1><p>Start with easy variations, focus on technique and take recovery days. APEX provides general exercise ideas, not medical advice or AI-powered coaching.</p><button class="btn full" onclick="finishIntro()">Enter APEX ↗</button><button class="btn secondary full" style="margin-top:9px" onclick="nextIntro(1)">Back</button></div>
+ </div>
+ </div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const $=id=>document.getElementById(id);
+const defaultData={
+ name:"",age:"",experience:"Beginner",goal:"Build strength",
+ sessions:[],schedule:{},custom:[],onboarded:false
+};
+let data;
+try{data={...defaultData,...JSON.parse(localStorage.getItem("apex_fitness_v1")||"{}")}}catch(e){data={...defaultData}}
+let activeFilter="All",introStep=0,session=null,timerInterval=null,secondsLeft=0;
+const exercises=[
+ {id:"push",name:"Push-ups",group:"Upper",level:"Beginner",sets:"2–3 sets",desc:"Keep your body in a straight line. Use a wall or raised surface if needed.",img:"photo-1598971639058-fab3c3109a00"},
+ {id:"kpush",name:"Knee push-ups",group:"Upper",level:"Beginner",sets:"2 sets",desc:"A gentler push-up variation. Keep movements controlled.",img:"photo-1598971639058-fab3c3109a00"},
+ {id:"squat",name:"Bodyweight squats",group:"Legs",level:"Beginner",sets:"2–3 sets",desc:"Use a comfortable range and keep feet firmly planted.",img:"photo-1571019613454-1cb2f99b2d8b"},
+ {id:"calf",name:"Calf raises",group:"Legs",level:"Beginner",sets:"2 sets",desc:"Rise smoothly onto your toes while holding a stable support.",img:"photo-1581009146145-b5ef050c2e1e"},
+ {id:"bridge",name:"Glute bridges",group:"Legs",level:"Beginner",sets:"2 sets",desc:"Lift your hips comfortably without over-arching your back.",img:"photo-1517836357463-d25dfeac3438"},
+ {id:"plank",name:"Knee plank",group:"Core",level:"Beginner",sets:"2 sets",desc:"Keep a comfortable neutral spine. Stop before your form breaks.",img:"photo-1518611012118-696072aa579a"},
+ {id:"deadbug",name:"Dead bugs",group:"Core",level:"Beginner",sets:"2 sets",desc:"Move opposite arm and leg slowly while keeping your back comfortable.",img:"photo-1518611012118-696072aa579a"},
+ {id:"bird",name:"Bird dogs",group:"Core",level:"Beginner",sets:"2 sets",desc:"Extend opposite arm and leg while keeping hips level.",img:"photo-1517836357463-d25dfeac3438"},
+ {id:"wall",name:"Wall push-ups",group:"Upper",level:"Beginner",sets:"2 sets",desc:"An accessible starting point for practicing push-up technique.",img:"photo-1598971639058-fab3c3109a00"},
+ {id:"mobility",name:"Gentle mobility flow",group:"Mobility",level:"Beginner",sets:"5–10 min",desc:"Use slow, pain-free shoulder, hip and ankle movements.",img:"photo-1518611012118-696072aa579a"},
+ {id:"shoulder",name:"Shoulder circles",group:"Mobility",level:"Beginner",sets:"1–2 min",desc:"Make gentle circles without forcing your range of motion.",img:"photo-1517836357463-d25dfeac3438"},
+ {id:"walk",name:"Easy warm-up walk",group:"Mobility",level:"Beginner",sets:"5 min",desc:"Walk at a comfortable pace to prepare for activity.",img:"photo-1534438327276-14e5300c3a48"}
+];
+const plans={
+ upper:["push","kpush","wall","plank"],
+ beginner:["wall","squat","bridge","deadbug"],
+ mobility:["walk","shoulder","mobility"],
+ legs:["squat","calf","bridge"],
+ core:["deadbug","bird","plank"]
+};
+function save(){try{localStorage.setItem("apex_fitness_v1",JSON.stringify(data))}catch(e){}}
+function toast(msg){const t=$("toast");t.textContent=msg;t.style.display="block";setTimeout(()=>t.style.display="none",2300)}
+function go(page){document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));$(page).classList.add("active");document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("active",b.dataset.page===page));if(page==="progress")renderProgress();if(page==="planner")renderPlanner();if(page==="library")renderLibrary();window.scrollTo({top:0,behavior:"smooth"})}
+$("nav").addEventListener("click",e=>{const b=e.target.closest("button[data-page]");if(b)go(b.dataset.page)});
+function nextIntro(n){introStep=n;document.querySelectorAll(".onboard-step").forEach((s,i)=>s.classList.toggle("active",i===n));document.querySelectorAll(".dots span").forEach((s,i)=>s.classList.toggle("active",i===n));}
+function finishIntro(){data.name=$("introName").value.trim();data.age=$("introAge").value;data.onboarded=true;save();$("intro").classList.add("hidden");loadProfile();renderHome();toast("Welcome to APEX!")}
+function saveProfile(){data.name=$("profileName").value.trim();data.age=$("profileAge").value;data.experience=$("experience").value;data.goal=$("goal").value;save();renderHome();toast("Profile saved!")}
+function loadProfile(){$("profileName").value=data.name||"";$("profileAge").value=data.age||"";$("experience").value=data.experience||"Beginner";$("goal").value=data.goal||"Build strength"}
+function startPlan(id){startSession(plans[id]||plans.beginner,id)}
+function startCustom(){if(!data.custom.length){toast("Add exercises in the lab first");return}startSession(data.custom,"custom")}
+function startSession(ids,plan){session={ids:[...ids],plan,index:0,checks:[],started:Date.now()};renderSession()}
+function renderSession(){
+ let page=$("workouts");page.innerHTML=`
+ <div class="eyebrow">ACTIVE SESSION · ${session.plan.toUpperCase()}</div>
+ <h1>Your workout.</h1>
+ <p style="margin-top:10px">Work at a comfortable pace. Tick exercises when completed. Take rest as needed.</p>
+ <div class="card" style="margin-top:22px">
+ <div class="row"><h2 id="sessionCount">Exercise 1 of ${session.ids.length}</h2><span class="tag" id="sessionTag">IN PROGRESS</span></div>
+ <div class="progress"><div id="sessionProgress"></div></div>
+ <div id="sessionExercise"></div>
+ <div class="row" style="margin-top:20px;flex-wrap:wrap"><button class="btn secondary" onclick="go('home')">Leave session</button><button class="btn" id="nextExercise" onclick="completeCurrent()">Complete exercise →</button></div>
+ </div>
+ <div class="card timer" style="margin-top:17px"><div class="eyebrow">REST TIMER</div><div id="timerDisplay">01:00</div><button class="btn" onclick="startTimer()">Start 60 sec</button><button class="btn secondary" onclick="stopTimer()">Stop / reset</button></div>`;
+ showCurrent();
+}
+function showCurrent(){
+ if(!session)return;
+ const ex=exercises.find(e=>e.id===session.ids[session.index]);
+ if(!ex){completeSession();return}
+ $("sessionCount").textContent=`Exercise ${session.index+1} of ${session.ids.length}`;
+ $("sessionProgress").style.width=(session.index/session.ids.length*100)+"%";
+ $("sessionExercise").innerHTML=`<img src="${imgUrl(ex.img,800)}" alt="${ex.name}" style="width:100%;height:230px;object-fit:cover;border-radius:12px;margin:18px 0"><span class="tag">${ex.group.toUpperCase()}</span><h2 style="margin-top:12px">${ex.name}</h2><p style="margin-top:9px">${ex.desc}</p><p style="margin-top:12px"><b>${ex.sets}</b> · Beginner-friendly option</p>`;
+ $("nextExercise").textContent=session.index===session.ids.length-1?"Finish workout ✓":"Complete exercise →";
+}
+function completeCurrent(){if(!session)return;session.checks.push(session.ids[session.index]);session.index++;if(session.index>=session.ids.length)completeSession();else showCurrent()}
+function completeSession(){
+ stopTimer();if(!session)return;
+ const mins=Math.max(1,Math.round((Date.now()-session.started)/60000));
+ data.sessions.push({date:new Date().toISOString(),plan:session.plan,count:session.ids.length,minutes:mins});
+ save();session=null;renderHome();renderProgress();go("progress");toast("Session completed. Great work!");
+}
+function startTimer(){stopTimer();if(!secondsLeft)secondsLeft=60;updateTimer();timerInterval=setInterval(()=>{secondsLeft--;updateTimer();if(secondsLeft<=0){stopTimer();toast("Rest timer complete")}},1000)}
+function stopTimer(){if(timerInterval)clearInterval(timerInterval);timerInterval=null;secondsLeft=0;updateTimer()}
+function updateTimer(){const el=$("timerDisplay");if(el)el.textContent=String(Math.floor(secondsLeft/60)).padStart(2,"0")+":"+String(secondsLeft%60).padStart(2,"0")}
+function imgUrl(id,w=600){return `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${w}&q=80`}
+function renderLibrary(){
+ const q=($("searchExercise")?.value||"").toLowerCase();
+ const list=exercises.filter(e=>(activeFilter==="All"||e.group===activeFilter)&&(e.name+" "+e.group+" "+e.desc).toLowerCase().includes(q));
+ $("libraryGrid").innerHTML=list.map(e=>`<article class="card exercise"><img loading="lazy" src="${imgUrl(e.img)}" alt="${e.name}"><div class="inside"><span class="tag">${e.group.toUpperCase()}</span><h3 style="margin-top:10px">${e.name}</h3><p>${e.desc}</p><div class="row"><small style="color:var(--muted)">${e.sets}</small><button class="btn" onclick="addCustom('${e.id}')">＋ Add</button></div></div></article>`).join("")||'<div class="card empty">No exercises found.</div>';
+ $("customSummary").textContent=data.custom.length?`${data.custom.length} exercise(s) in your custom session.`:"No exercises selected yet.";
+ $("customList").innerHTML=data.custom.map(id=>{const e=exercises.find(x=>x.id===id);return e?`<div class="workout-item"><div class="details"><h3>${e.name}</h3><p>${e.group}</p></div><button class="btn secondary" onclick="removeCustom('${id}')">Remove</button></div>`:""}).join("");
+}
+function addCustom(id){if(!data.custom.includes(id))data.custom.push(id);save();renderLibrary();toast("Added to custom session")}
+function removeCustom(id){data.custom=data.custom.filter(x=>x!==id);save();renderLibrary()}
+function clearCustom(){data.custom=[];save();renderLibrary()}
+$("filters").addEventListener("click",e=>{const b=e.target.closest("button[data-filter]");if(!b)return;activeFilter=b.dataset.filter;document.querySelectorAll("#filters button").forEach(x=>x.classList.toggle("active",x===b));renderLibrary()});
+function renderHome(){
+ const s=data.sessions,ex=s.reduce((a,x)=>a+x.count,0),days=new Set(s.map(x=>x.date.slice(0,10))).size;
+ $("homeDone").textContent=s.length;$("homeDays").textContent=days;$("homeExercises").textContent=ex;
+ $("dailyTitle").textContent=data.name?`Keep going, ${data.name}.`:"Ready when you are.";
+ $("dailyText").textContent=data.goal?`Your goal: ${data.goal}. Choose a manageable session today.`:"Pick a session and record your progress.";
+}
+const weekdays=["Monday","Tuesday","Wednesday","Thursday","Friday","Saturday","Sunday"];
+function renderPlanner(){
+ $("weekPlan").innerHTML=weekdays.map(d=>`<div class="card row"><div style="min-width:75px"><h3>${d}</h3><small style="color:var(--muted)">Weekly focus</small></div><select aria-label="${d} focus" onchange="setSchedule('${d}',this.value)" style="max-width:220px;margin:0"><option value="">Rest / free day</option>${["Upper Body","Full Body","Legs","Core","Mobility","Football / Sport"].map(x=>`<option ${data.schedule[d]===x?"selected":""}>${x}</option>`).join("")}</select></div>`).join("");
+}
+function setSchedule(day,value){data.schedule[day]=value;save();toast(day+" updated")}
+function renderProgress(){
+ const s=data.sessions;
+ $("pDone").textContent=s.length;$("pExercises").textContent=s.reduce((a,x)=>a+x.count,0);$("pMinutes").textContent=s.reduce((a,x)=>a+x.minutes,0);
+ const days=[];for(let i=6;i>=0;i--){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-i);const key=d.toISOString().slice(0,10);days.push({key,label:d.toLocaleDateString("en",{weekday:"short"}),n:s.filter(x=>x.date.slice(0,10)===key).length})}
+ const max=Math.max(1,...days.map(d=>d.n));
+ $("chart").innerHTML=days.map(d=>`<div class="bar" title="${d.n} sessions" style="height:${Math.max(5,d.n/max*100)}%"><span>${d.label}</span></div>`).join("");
+ $("history").innerHTML=s.length?[...s].reverse().slice(0,30).map(x=>`<div class="workout-item"><div class="details"><h3>${x.plan.replace(/^\w/,c=>c.toUpperCase())} session</h3><p>${new Date(x.date).toLocaleString()} · ${x.count} exercises · ${x.minutes} min</p></div></div>`).join(""):'<div class="empty"><h3>No sessions yet</h3><p>Complete a workout to start your history.</p></div>';
+}
+function exportData(){const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});const url=URL.createObjectURL(blob);const a=document.createElement("a");a.href=url;a.download="apex-fitness-data.json";a.click();URL.revokeObjectURL(url);toast("Export started")}
+function resetData(){if(!confirm("Delete all your APEX profile, plans and history on this device?"))return;localStorage.removeItem("apex_fitness_v1");location.reload()}
+function init(){
+ loadProfile();renderHome();renderLibrary();renderPlanner();renderProgress();
+ if(!data.onboarded){$("intro").classList.remove("hidden")}else{$("intro").classList.add("hidden")}
+}
+init();
+</script>
+</body>
+</html>
